@@ -1,44 +1,46 @@
 package pro.sky.api_homework.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pro.sky.api_homework.model.Faculty;
+import pro.sky.api_homework.repository.FacultyRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class FacultyService {
-    private final Map<Long, Faculty> faculties = new HashMap<>();
-    private Long id = 0L;
+
+    @Autowired
+    private final FacultyRepository facultyRepository;
+
+    public FacultyService(FacultyRepository facultyRepository) {
+        this.facultyRepository = facultyRepository;
+    }
 
     public Faculty add(Faculty faculty) {
-        faculty.setId(++id);
-        faculties.put(id, faculty);
-        return faculty;
+        return facultyRepository.save(faculty);
     }
 
     public Faculty find(Long id) {
-        return faculties.get(id);
+        return facultyRepository.findById(id).get();
     }
 
     public Faculty edit(Faculty faculty) {
-        faculties.put(faculty.getId(), faculty);
-        return faculty;
+        return facultyRepository.save(faculty);
     }
 
-    public Faculty delete(Long id) {
-        return faculties.remove(id);
+    public void delete(Long id) {
+        return facultyRepository.deleteById(id);
     }
 
     public Collection<Faculty> getAllFaculty() {
-        return faculties.values();
+        return facultyRepository.findAll();
     }
 
     public Collection<Faculty> getAllFacultyByColor(String color) {
         Collection<Faculty> facultiesByColor = new ArrayList<>();
-        for (Faculty faculty : faculties.values()) {
+        for (Faculty faculty : facultyRepository.findAll()) {
             if (faculty.getColor().equals(color)) {
                 facultiesByColor.add(faculty);
             }

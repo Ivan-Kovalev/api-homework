@@ -53,8 +53,9 @@ public class FacultyController {
     }
 
     @DeleteMapping(path = "/{id}") // DELETE http://localhost:8080/faculty/2
-    public Faculty deleteFaculty(@PathVariable Long id) {
-        return service.delete(id);
+    public ResponseEntity deleteFaculty(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.ok().build();
     }
 
 }
