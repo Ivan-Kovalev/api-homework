@@ -1,63 +1,71 @@
-//package pro.sky.api_homework.service;
-//
-//import org.junit.jupiter.api.Assertions;
-//import org.junit.jupiter.api.Test;
-//import pro.sky.api_homework.model.Faculty;
-//
-//class FacultyServiceTest {
-//
-//    private final FacultyService service = new FacultyService();
-//    private final Faculty defaultFaculty = new Faculty(1L, "123", "123");
-//
-//    @Test
-//    void add() {
-//        Assertions.assertEquals(defaultFaculty, service.add(new Faculty(1L, "123", "123")));
-//        Assertions.assertEquals(1, service.getAllFaculty().size());
-//        Assertions.assertNotNull(service.getAllFaculty());
-//    }
-//
-//    @Test
-//    void find() {
-//        service.add(defaultFaculty);
-//
-//        Assertions.assertEquals(defaultFaculty, service.find(1L));
-//    }
-//
-//    @Test
-//    void edit() {
-//        service.add(defaultFaculty);
-//
-//        Assertions.assertEquals(new Faculty(1L, "666", "000"),
-//                service.edit(new Faculty(1L, "666", "000")));
-//
-//        Assertions.assertEquals(defaultFaculty,
-//                service.edit(new Faculty(1L, "123", "123")));
-//
-//    }
-//
-//    @Test
-//    void delete() {
-//        service.add(defaultFaculty);
-//
-//        Assertions.assertEquals(defaultFaculty, service.delete(defaultFaculty.getId()));
-//        Assertions.assertTrue(service.getAllFaculty().isEmpty());
-//    }
-//
-//    @Test
-//    void getAllFaculty() {
-//        service.add(defaultFaculty);
-//        service.add(defaultFaculty);
-//
-//        Assertions.assertEquals(2, service.getAllFaculty().size());
-//    }
-//
-//    @Test
-//    void getAllFacultyByColor() {
-//        service.add(new Faculty(0L, "111", "красный"));
-//        service.add(new Faculty(1L, "222", "синий"));
-//        service.add(new Faculty(2L, "333", "красный"));
-//
-//        Assertions.assertEquals(2, service.getAllFacultyByColor("красный").size());
-//        Assertions.assertEquals(1, service.getAllFacultyByColor("синий").size());
-//    }
-//}
+package pro.sky.api_homework.service;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import pro.sky.api_homework.model.Faculty;
+import pro.sky.api_homework.repository.FacultyRepository;
+
+import java.util.List;
+
+@ExtendWith(MockitoExtension.class)
+class FacultyServiceTest {
+
+    private final Faculty faculty = new Faculty(1L, "Gryffindor", "red");
+    private final List<Faculty> faculties = List.of(
+            new Faculty(1L, "Gryffindor", "red"),
+            new Faculty(2L, "Slytherin", "green"),
+            new Faculty(3L, "GryffindorCopy", "red"),
+            new Faculty(4L, "SlytherinCopy", "green"));
+
+    @Mock
+    private FacultyRepository facultyRepository;
+
+    @InjectMocks
+    private FacultyService service;
+
+    @Test
+    void add() {
+        Mockito.when(facultyRepository.save(new Faculty(1L, "Gryffindor", "red"))).thenReturn(faculty);
+
+        Assertions.assertEquals(faculty, service.add(new Faculty(1L, "Gryffindor", "red")));
+    }
+
+    @Test
+    void find() {
+        Mockito.when(facultyRepository.findById(1L).get()).thenReturn(faculty);
+
+        Assertions.assertEquals(faculty, service.find(1L));
+    }
+
+    @Test
+    void edit() {
+        Mockito.when(facultyRepository.save(new Faculty(1L, "Gryffindor", "red"))).thenReturn(faculty);
+
+        Assertions.assertEquals(faculty, service.edit(new Faculty(1L, "Gryffindor", "red")));
+    }
+
+    @Test
+    void delete() {
+    }
+
+    @Test
+    void getAllFaculty() {
+        Mockito.when(facultyRepository.findAll()).thenReturn(faculties);
+
+        Assertions.assertEquals(faculties, service.getAllFaculty());
+        Assertions.assertEquals(4, service.getAllFaculty().size());
+    }
+
+    @Test
+    void getAllFacultyByColor() {
+        Mockito.when(facultyRepository.findAll()).thenReturn(faculties);
+
+        Assertions.assertEquals(2, service.getAllFacultyByColor("red").size());
+        Assertions.assertEquals(2, service.getAllFacultyByColor("green").size());
+    }
+}
