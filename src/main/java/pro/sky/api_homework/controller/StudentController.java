@@ -8,7 +8,7 @@ import pro.sky.api_homework.service.StudentService;
 import java.util.Collection;
 
 @RestController
-@RequestMapping(path = "/student")
+@RequestMapping(path = "/students")
 public class StudentController {
 
     private final StudentService service;
@@ -17,7 +17,7 @@ public class StudentController {
         this.service = service;
     }
 
-    @GetMapping(path = "/{id}") // GET http://localhost:8080/student/7
+    @GetMapping(path = "/{id}")
     public ResponseEntity<Student> getStudent(@PathVariable Long id) {
         Student student = service.find(id);
         if (student == null) {
@@ -26,35 +26,36 @@ public class StudentController {
         return ResponseEntity.ok(student);
     }
 
-    @GetMapping                 // GET http://localhost:8080/student
+    @GetMapping
     public ResponseEntity<Collection<Student>> getAllStudent() {
         Collection<Student> students = service.getAllStudents();
         return ResponseEntity.ok(students);
     }
 
-    @GetMapping(path = "/age")   // GET http://localhost:8080/student/age?age=15
+    @GetMapping(path = "/age")
     public ResponseEntity<Collection<Student>> getAllStudentByAge(@RequestParam Integer age) {
         Collection<Student> students = service.getAllStudentsByAge(age);
         return ResponseEntity.ok(students);
     }
 
-    @PostMapping                // POST http://localhost:8080/student
+    @PostMapping
     public Student addStudent(@RequestBody Student student) {
         return service.add(student);
     }
 
-    @PutMapping                 // PUT http://localhost:8080/student/
-    public ResponseEntity<Student> putStudent(@RequestBody Student student) {
+    @PutMapping
+    public ResponseEntity<Student> editStudent(@RequestBody Student student) {
         Student findStudent = service.edit(student);
-        if (findStudent == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(findStudent);
     }
 
-    @DeleteMapping(path = "/{id}") // DELETE http://localhost:8080/student/7
-    public ResponseEntity deleteStudent(@PathVariable Long id) {
-        service.delete(id);
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
+        boolean isDeleted = service.delete(id);
+        if (isDeleted) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

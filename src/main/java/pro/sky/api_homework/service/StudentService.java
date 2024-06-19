@@ -7,11 +7,12 @@ import pro.sky.api_homework.repository.StudentRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentService {
 
-    @Autowired
     private final StudentRepository studentRepository;
 
     public StudentService(StudentRepository studentRepository) {
@@ -23,28 +24,31 @@ public class StudentService {
     }
 
     public Student find(Long id) {
-        return studentRepository.findById(id).get();
+        return studentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("не смог найти студента по айди = " + id));
     }
 
     public Student edit(Student student) {
         return studentRepository.save(student);
     }
 
-    public void delete(Long id) {
-        studentRepository.deleteById(id);
+    public boolean delete(Long id) {
+        Optional<Student> studentOptional = studentRepository.findById(id);
+        if (studentOptional.isPresent()) {
+            studentRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public Collection<Student> getAllStudents() {
+    public List<Student> getAllStudents() {
         return studentRepository.findAll();
     }
 
-    public Collection<Student> getAllStudentsByAge(Integer age) {
-        Collection<Student> studentsByAge = new ArrayList<>();
-        for (Student student : studentRepository.findAll()) {
-            if (student.getAge().equals(age)) {
-                studentsByAge.add(student);
-            }
-        }
-        return studentsByAge;
+    public List<Student> getAllStudentsByAge(Integer age) {
+        return studentRepository.findAll().stream()
+                .filter(faculty -> faculty.getAge().equals(age))
+                .toList();
     }
 }

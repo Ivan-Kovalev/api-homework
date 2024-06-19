@@ -3,15 +3,18 @@ package pro.sky.api_homework.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pro.sky.api_homework.model.Faculty;
+import pro.sky.api_homework.model.Student;
 import pro.sky.api_homework.repository.FacultyRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 public class FacultyService {
 
-    @Autowired
     private final FacultyRepository facultyRepository;
 
     public FacultyService(FacultyRepository facultyRepository) {
@@ -23,28 +26,31 @@ public class FacultyService {
     }
 
     public Faculty find(Long id) {
-        return facultyRepository.findById(id).get();
+        return facultyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("не смог найти факультет по айди = " + id));
     }
 
     public Faculty edit(Faculty faculty) {
         return facultyRepository.save(faculty);
     }
 
-    public void delete(Long id) {
-        facultyRepository.deleteById(id);
+    public boolean delete(Long id) {
+        Optional<Faculty> facultyOptional = facultyRepository.findById(id);
+        if (facultyOptional.isPresent()) {
+            facultyRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public Collection<Faculty> getAllFaculty() {
+    public List<Faculty> getAllFaculty() {
         return facultyRepository.findAll();
     }
 
-    public Collection<Faculty> getAllFacultyByColor(String color) {
-        Collection<Faculty> facultiesByColor = new ArrayList<>();
-        for (Faculty faculty : facultyRepository.findAll()) {
-            if (faculty.getColor().equals(color)) {
-                facultiesByColor.add(faculty);
-            }
-        }
-        return facultiesByColor;
+    public List<Faculty> getAllFacultyByColor(String color) {
+        return facultyRepository.findAll().stream()
+                .filter(faculty -> faculty.getColor().equals(color))
+                .toList();
     }
 }

@@ -11,6 +11,9 @@ import pro.sky.api_homework.model.Faculty;
 import pro.sky.api_homework.repository.FacultyRepository;
 
 import java.util.List;
+import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 class FacultyServiceTest {
@@ -20,7 +23,8 @@ class FacultyServiceTest {
             new Faculty(1L, "Gryffindor", "red"),
             new Faculty(2L, "Slytherin", "green"),
             new Faculty(3L, "GryffindorCopy", "red"),
-            new Faculty(4L, "SlytherinCopy", "green"));
+            new Faculty(4L, "SlytherinCopy", "green"),
+            new Faculty(5L, "SlytherinCopy2", null));
 
     @Mock
     private FacultyRepository facultyRepository;
@@ -30,14 +34,14 @@ class FacultyServiceTest {
 
     @Test
     void add() {
-        Mockito.when(facultyRepository.save(new Faculty(1L, "Gryffindor", "red"))).thenReturn(faculty);
+        Mockito.when(facultyRepository.save(any())).thenReturn(faculty);
 
         Assertions.assertEquals(faculty, service.add(new Faculty(1L, "Gryffindor", "red")));
     }
 
     @Test
     void find() {
-        Mockito.when(facultyRepository.findById(1L).get()).thenReturn(faculty);
+        Mockito.when(facultyRepository.findById(1L)).thenReturn(Optional.of(faculty));
 
         Assertions.assertEquals(faculty, service.find(1L));
     }
@@ -51,6 +55,9 @@ class FacultyServiceTest {
 
     @Test
     void delete() {
+        Long id = 1L;
+        service.delete(id);
+        Mockito.verify(facultyRepository, Mockito.timeout(1)).deleteById(id);
     }
 
     @Test
@@ -65,6 +72,7 @@ class FacultyServiceTest {
     void getAllFacultyByColor() {
         Mockito.when(facultyRepository.findAll()).thenReturn(faculties);
 
+        Assertions.assertEquals(5, service.getAllFaculty().size());
         Assertions.assertEquals(2, service.getAllFacultyByColor("red").size());
         Assertions.assertEquals(2, service.getAllFacultyByColor("green").size());
     }

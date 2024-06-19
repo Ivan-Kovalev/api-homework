@@ -8,7 +8,7 @@ import pro.sky.api_homework.service.FacultyService;
 import java.util.Collection;
 
 @RestController
-@RequestMapping(path = "faculty")
+@RequestMapping(path = "faculties")
 public class FacultyController {
 
     private final FacultyService service;
@@ -17,7 +17,7 @@ public class FacultyController {
         this.service = service;
     }
 
-    @GetMapping(path = "/{id}") // GET http://localhost:8080/faculty/2
+    @GetMapping(path = "/{id}")
     public ResponseEntity<Faculty> getFaculty(@PathVariable Long id) {
         Faculty faculty = service.find(id);
         if (faculty == null) {
@@ -26,36 +26,37 @@ public class FacultyController {
         return ResponseEntity.ok(faculty);
     }
 
-    @GetMapping                 // GET http://localhost:8080/faculty
+    @GetMapping
     public ResponseEntity<Collection<Faculty>> getAllFaculty() {
         Collection<Faculty> faculty = service.getAllFaculty();
         return ResponseEntity.ok(faculty);
     }
 
-    @GetMapping(path = "/color")   // GET http://localhost:8080/faculty/color?color=orange
+    @GetMapping(path = "/color")
     public ResponseEntity<Collection<Faculty>> getAllFacultyByColor(@RequestParam String color) {
         Collection<Faculty> faculty = service.getAllFacultyByColor(color);
         return ResponseEntity.ok(faculty);
     }
 
-    @PostMapping                // POST http://localhost:8080/faculty
+    @PostMapping
     public Faculty addFaculty(@RequestBody Faculty faculty) {
         return service.add(faculty);
     }
 
-    @PutMapping                 // PUT http://localhost:8080/faculty
-    public ResponseEntity<Faculty> putFaculty(@RequestBody Faculty faculty) {
+    @PutMapping
+    public ResponseEntity<Faculty> editFaculty(@RequestBody Faculty faculty) {
         Faculty findFaculty = service.edit(faculty);
-        if (findFaculty == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(findFaculty);
     }
 
-    @DeleteMapping(path = "/{id}") // DELETE http://localhost:8080/faculty/2
-    public ResponseEntity deleteFaculty(@PathVariable Long id) {
-        service.delete(id);
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteFaculty(@PathVariable Long id) {
+        boolean isDeleted = service.delete(id);
+        if (isDeleted) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }
