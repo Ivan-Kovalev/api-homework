@@ -1,5 +1,6 @@
 package pro.sky.api_homework.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pro.sky.api_homework.model.Faculty;
@@ -32,8 +33,8 @@ public class FacultyController {
         return ResponseEntity.ok(faculty);
     }
 
-    @GetMapping(path = "/color")
-    public ResponseEntity<Collection<Faculty>> getAllFacultyByColor(@RequestParam String color) {
+    @GetMapping(path = "/{color}")
+    public ResponseEntity<Collection<Faculty>> getAllFacultyByColor(@PathVariable String color) {
         Collection<Faculty> faculty = service.getAllFacultyByColor(color);
         return ResponseEntity.ok(faculty);
     }
@@ -43,10 +44,12 @@ public class FacultyController {
         return service.add(faculty);
     }
 
-    @PutMapping
-    public ResponseEntity<Faculty> editFaculty(@RequestBody Faculty faculty) {
-        Faculty findFaculty = service.edit(faculty);
-        return ResponseEntity.ok(findFaculty);
+    @PutMapping public ResponseEntity<Faculty> updateFaculty(@RequestBody Faculty updatedFaculty) {
+        Faculty updated = service.edit(updatedFaculty);
+        if(updated!=null) {
+            return new ResponseEntity<>(updated, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}")

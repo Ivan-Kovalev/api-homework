@@ -32,10 +32,9 @@ public class StudentController {
         return ResponseEntity.ok(students);
     }
 
-    @GetMapping(path = "/age")
-    public ResponseEntity<Collection<Student>> getAllStudentByAge(@RequestParam Integer age) {
-        Collection<Student> students = service.getAllStudentsByAge(age);
-        return ResponseEntity.ok(students);
+    @GetMapping(path = "/{age}")
+    public Collection<Student> getAllStudentByAge(@PathVariable Integer age) {
+        return service.getAllStudentsByAge(age);
     }
 
     @PostMapping
