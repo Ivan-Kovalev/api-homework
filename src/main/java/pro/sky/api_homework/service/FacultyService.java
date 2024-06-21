@@ -1,16 +1,12 @@
 package pro.sky.api_homework.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pro.sky.api_homework.model.Faculty;
 import pro.sky.api_homework.model.Student;
 import pro.sky.api_homework.repository.FacultyRepository;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Service
 public class FacultyService {
@@ -27,7 +23,7 @@ public class FacultyService {
 
     public Faculty find(Long id) {
         return facultyRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("не смог найти факультет по айди = " + id));
+                .orElse(null);
     }
 
     public Faculty edit(Faculty faculty) {
@@ -49,8 +45,6 @@ public class FacultyService {
     }
 
     public List<Faculty> getAllFacultyByColor(String color) {
-        return facultyRepository.findAll().stream()
-                .filter(faculty -> faculty.getColor().equals(color))
-                .toList();
+        return facultyRepository.findFacultyByColor(color);
     }
 }

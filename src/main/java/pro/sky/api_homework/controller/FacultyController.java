@@ -1,5 +1,6 @@
 package pro.sky.api_homework.controller;
 
+import org.aspectj.weaver.reflect.IReflectionWorld;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,22 +45,18 @@ public class FacultyController {
         return service.add(faculty);
     }
 
-    @PutMapping public ResponseEntity<Faculty> updateFaculty(@RequestBody Faculty updatedFaculty) {
-        Faculty updated = service.edit(updatedFaculty);
-        if(updated!=null) {
+    @PutMapping
+    public ResponseEntity<Faculty> updateFaculty(@RequestBody Faculty faculty) {
+        Faculty updated = service.edit(faculty);
+        if (updated != null) {
             return new ResponseEntity<>(updated, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFaculty(@PathVariable Long id) {
-        boolean isDeleted = service.delete(id);
-        if (isDeleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public void deleteFaculty(@PathVariable Long id) {
+        service.delete(id);
     }
 
 }

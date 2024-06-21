@@ -13,7 +13,10 @@ import pro.sky.api_homework.repository.FacultyRepository;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class FacultyServiceTest {
@@ -55,9 +58,11 @@ class FacultyServiceTest {
 
     @Test
     void delete() {
-//        Long id = 1L;
-//        service.delete(id);
-//        Mockito.verify(facultyRepository, Mockito.timeout(1)).deleteById(id);
+        faculty.setId(1L);
+        when(facultyRepository.findById(1L)).thenReturn(Optional.of(faculty));
+
+        assertTrue(service.delete(1L));
+        verify(facultyRepository).deleteById(1L);
     }
 
     @Test
@@ -70,5 +75,8 @@ class FacultyServiceTest {
 
     @Test
     void getAllFacultyByColor() {
+        Mockito.when(facultyRepository.findFacultyByColor(any())).thenReturn(faculties);
+
+        Assertions.assertEquals(faculties, service.getAllFacultyByColor("red"));
     }
 }

@@ -1,12 +1,9 @@
 package pro.sky.api_homework.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pro.sky.api_homework.model.Student;
 import pro.sky.api_homework.repository.StudentRepository;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +22,7 @@ public class StudentService {
 
     public Student find(Long id) {
         return studentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("не смог найти студента по айди = " + id));
+                .orElse(null);
     }
 
     public Student edit(Student student) {
@@ -47,8 +44,6 @@ public class StudentService {
     }
 
     public List<Student> getAllStudentsByAge(Integer age) {
-        return studentRepository.findAll().stream()
-                .filter(faculty -> faculty.getAge().equals(age))
-                .toList();
+        return studentRepository.findStudentByAge(age);
     }
 }

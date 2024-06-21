@@ -1,5 +1,6 @@
 package pro.sky.api_homework.service;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +14,10 @@ import pro.sky.api_homework.repository.StudentRepository;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class StudentServiceTest {
@@ -33,35 +37,37 @@ class StudentServiceTest {
 
     @Test
     void add() {
-        Mockito.when(studentRepository.save(any())).thenReturn(student);
+        when(studentRepository.save(any())).thenReturn(student);
 
         Assertions.assertEquals(student, service.add(new Student(1L, "Harry Potter", 16)));
     }
 
     @Test
     void find() {
-        Mockito.when(studentRepository.findById(1L)).thenReturn(Optional.of(student));
+        when(studentRepository.findById(1L)).thenReturn(Optional.of(student));
 
         Assertions.assertEquals(student, service.find(1L));
     }
 
     @Test
     void edit() {
-        Mockito.when(studentRepository.save(new Student(1L, "Harry Potter", 16))).thenReturn(student);
+        when(studentRepository.save(new Student(1L, "Harry Potter", 16))).thenReturn(student);
 
         Assertions.assertEquals(student, service.edit(new Student(1L, "Harry Potter", 16)));
     }
 
     @Test
     void delete() {
-//        Long id = 1L;
-//        service.delete(id);
-//        Mockito.verify(studentRepository, Mockito.timeout(1)).deleteById(id);
+        student.setId(1L);
+        when(studentRepository.findById(1L)).thenReturn(Optional.of(student));
+
+        assertTrue(service.delete(1L));
+        verify(studentRepository).deleteById(1L);
     }
 
     @Test
     void getAllStudents() {
-        Mockito.when(studentRepository.findAll()).thenReturn(students);
+        when(studentRepository.findAll()).thenReturn(students);
 
         Assertions.assertEquals(students, service.getAllStudents());
         Assertions.assertEquals(4, service.getAllStudents().size());
@@ -69,5 +75,8 @@ class StudentServiceTest {
 
     @Test
     void getAllStudentsByAge() {
+        when(studentRepository.findStudentByAge(any())).thenReturn(students);
+
+        Assertions.assertEquals(students, service.getAllStudentsByAge(15));
     }
 }
